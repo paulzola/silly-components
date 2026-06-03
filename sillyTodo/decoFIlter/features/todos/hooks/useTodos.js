@@ -1,34 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
 import { todosApi } from '../api/todosApi';
 import { TodoModel } from '../model/todoModel';
-
-const Status = {
-  IDLE: 'idle',
-  LOADING: 'loading',
-  SUCCESS: 'success',
-  ERROR: 'error'
-};
-
-const ActionStatus = {
-  IDLE: 'idle',
-  PENDING: 'pending',
-  SUCCESS: 'success',
-  ERROR: 'error'
-};
-
+import { Status } from './status';
+ 
 export function useTodos() {
   const [model] = useState(() => new TodoModel());
   const [, forceUpdate] = useState({});
 
   const [status, setStatus] = useState(Status.LOADING);
-  const [actionStatus, setActionStatus] = useState(ActionStatus.IDLE);
   const [error, setError] = useState(null);
+  const [isAdding, setIsAdding] = useState(false);
 
   const refresh = useCallback(() => forceUpdate({}), []);
 
   useEffect(() => {
-    setStatus(Status.LOADING);
-    
     todosApi.fetchAll()
       .then(data => {
         model.setTodos(data);
@@ -50,18 +35,18 @@ export function useTodos() {
 
     const tempTodo = model.addTempTodo(text);
     refresh();
-    setActionStatus(ActionStatus.PENDING);
+    setIsAdding(true);
 
     try {
       const saved = await todosApi.create({ text: text.trim(), done: false });
       model.replaceTempTodo(tempTodo.id, saved);
       refresh();
-      setActionStatus(ActionStatus.SUCCESS);
     } catch (err) {
       model.removeTempTodo(tempTodo.id);
       refresh();
       setError(err.message);
-      setActionStatus(ActionStatus.ERROR);
+    } finally {
+      setIsAdding(false);
     }
   }, [model, refresh]);
 
@@ -103,7 +88,7 @@ export function useTodos() {
     filter: model.getFilter(),
     status,
     error,
-    isAdding: actionStatus === ActionStatus.PENDING,
+    isAdding,
     setFilter,
     addTodo,
     toggleTodo,

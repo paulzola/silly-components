@@ -1,15 +1,10 @@
 import { useTodos } from './hooks/useTodos';
+import { Status } from './hooks/status';
 import { TodoForm } from './components/TodoForm';
 import { TodoFilters } from './components/TodoFilters';
 import { TodoList } from './components/TodoList';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
-
-const Status = {
-  LOADING: 'loading',
-  SUCCESS: 'success',
-  ERROR: 'error'
-};
 
 export function TodoApp() {
   const {
