@@ -1,7 +1,3 @@
-// Доменно-ориентированный сервис.
-// Знает про "промокоды" и "заказы", но не про React и не про Redux.
-// Зависимости приходят снаружи через фабрику (DI).
-
 export function createCheckoutService({ httpClient }) {
   return {
     async fetchPromo(code) {
