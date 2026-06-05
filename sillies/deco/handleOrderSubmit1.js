@@ -16,11 +16,3 @@ async function handleOrderSubmit(formData) {
   const res = await fetch('/api/orders', { method: 'POST', body: JSON.stringify({ ...formData, total }) });
   // ...
 }
-
-async function handleOrderSubmit(formData) {
-  const validationError = validateOrder(formData);
-  if (validationError) return { error: validationError };
-
-  const total = await calculateTotal(formData.items, formData.promo);
-  return submitOrder({ ...formData, total });
-}
